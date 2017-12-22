@@ -1,30 +1,39 @@
 package woodward
 
-import groovy.transform.ToString
-import groovy.transform.Immutable
+import woodward.util.Domain
 
 /**
+ * Represents an online article.
+ *
  * @since 0.1.0
  */
-@Immutable
-@ToString(includeNames = true)
+@Domain(includeNames = true)
 class Article {
+
   /**
+   * The content of the article
+   *
    * @since 0.1.0
    */
   String text
 
   /**
+   * The title of the article
+   *
    * @since 0.1.0
    */
   String title
 
   /**
+   * The date when the article was published
+   *
    * @since 0.1.0
    */
   String publishDate
 
   /**
+   * The list of strings with the authors who signed the article
+   *
    * @since 0.1.0
    */
   List<String> authors

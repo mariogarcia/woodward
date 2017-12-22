@@ -1,9 +1,7 @@
 package woodward.extractors
 
 import org.jsoup.nodes.Document
-import opennlp.tools.util.Span
-import woodward.Utils
-import woodward.nlp.Models
+import woodward.util.Misc
 
 /**
  * This class contains functions to extract author names from
@@ -19,11 +17,16 @@ class Authors {
   static final String SEPARATOR = " and "
 
   /*
+   * Constant value representing a space character
+   *
    * @since 0.1.0
    */
   static final String SPACE = " "
 
   /*
+   * Map of common prepositions in different languages that normally
+   * precede person names
+   *
    * @since 0.1.0
    */
   static final Map<String, String> TO_REMOVE_FROM_AUTHORS = [
@@ -33,7 +36,10 @@ class Authors {
   ]
 
   /**
-   * @param document document source
+   * Extracts a list of author names found in the {@link Document}
+   * passed as parameter
+   *
+   * @param document document source to get the authors from
    * @return a list of authors
    * @since 0.1.0
    */
@@ -43,7 +49,7 @@ class Authors {
                  {-> byAttributeAndContent(document)}]
 
 
-    return paths.findResult(Utils.&skipIfEmptyList)
+    return paths.findResult(Misc.&skipIfEmptyList)
   }
 
   /**
@@ -69,9 +75,12 @@ class Authors {
   }
 
   /**
+   * Returns a function used to get a list of authors from a given
+   * tuple of attribute name and value.
    *
-   * @param document
-   * @return
+   * @param document {@link Document} to get the tuples from
+   * @return a {@link Closure} receiving a list and returning a list
+     of strings
    * @since 0.1.0
    */
   static Closure<String> perCombination(Document document) {
@@ -129,14 +138,17 @@ class Authors {
   }
 
   /**
-   * @param authors
-   * @return
+   * Removes common prepositions preceding names from the string
+   * passed as parameter
+   *
+   * @param authors string containing name/s of authors
+   * @return a string without common prepositions
    * @since 0.1.0
    */
   static String removePrefixes(String authors) {
     return TO_REMOVE_FROM_AUTHORS
       .entrySet()
-      .inject(authors){ acc, val -> acc.replaceAll(val.value, " ") }
+      .inject(authors){ acc, val -> acc.replaceAll(val.value, SPACE) }
   }
 
 
@@ -151,18 +163,8 @@ class Authors {
   static List<String> splitAuthors(String authors) {
     if (!authors) return []
 
-    String[] tokens = removePrefixes(authors).split(SPACE)
-
-    return Models
-      .NAME_FINDER
-      .find(tokens)
+    return removePrefixes(authors)
+      .split(SPACE)
       .findAll()
-      .collect { Span span ->
-        Boolean isJustOneWord = (span.end - span.start) == 1
-
-        String name = isJustOneWord ?
-          "${tokens[span.start]}".toString() :
-          "${tokens[span.start]} ${tokens[span.end - 1]}".toString()
-      }
   }
 }

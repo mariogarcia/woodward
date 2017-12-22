@@ -21,4 +21,12 @@ class LibraryTest extends Specification {
       article.text
       article.authors
   }
+
+  def "source"() {
+    when:
+      Source source = W.readSource("https://www.cnn.com")
+
+    then:
+      source.categories
+  }
 }

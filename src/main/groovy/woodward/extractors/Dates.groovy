@@ -3,16 +3,26 @@ package woodward.extractors
 import org.jsoup.nodes.Document
 
 /**
+ * Functions to extract dates from a given article
+ *
  * @since 0.1.0
  */
 class Dates {
 
   /**
+   * This regular expression will be used to extract a date from a
+   * given string
+   *
    * @since 0.1.0
    */
   static final DATE_REGEX = /([\.\/\-_]{0,1}(19|20)\d{2})[\.\/\-_]{0,1}(([0-3]{0,1}[0-9][\.\/\-_])|(\w{3,5}[\.\/\-_]))([0-3]{0,1}[0-9][\.\/\-]{0,1})?/
 
   /**
+   * List of combinations representing attribute names and expected
+   * values of html elements. First two keys serve to locate the
+   * element, and the third key is the name of the attribute to get
+   * the date from.
+   *
    * @since 0.1.0
    */
   static final DATE_TAGS = [
@@ -39,7 +49,7 @@ class Dates {
   ]
 
   /**
-   *
+   * The article publish date
    *
    * @since 0.1.0
    *
@@ -64,8 +74,11 @@ class Dates {
     }
 
     /**
-     * @param document
-     * @return
+     * Extracts the publish date from the uri used to
+     * get the article.
+     *
+     * @param document document to get the date from
+     * @return a string representing the extracted date
      * @since 0.1.0
      */
     static String fromUrl(Document document) {
@@ -79,8 +92,11 @@ class Dates {
     }
 
     /**
-     * @param document
-     * @return
+     * After the uri, you could also get the publish date looking into
+     * the metatag elements
+     *
+     * @param document document to get the date from
+     * @return a string representing the article publish date
      * @since 0.1.0
      */
     static String fromMetatags(Document document) {
@@ -88,8 +104,12 @@ class Dates {
     }
 
     /**
-     * @param document
-     * @return
+     * Method returning a function used to convert every element of a
+     * list from a map to a string containing a date
+     *
+     * @param document document to get the date from
+     * @return a function having a map as parameter and returning a
+     * string
      * @since 0.1.0
      */
     static Closure loopThroughOptions(Document document) {

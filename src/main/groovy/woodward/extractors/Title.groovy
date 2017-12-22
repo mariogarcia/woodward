@@ -24,8 +24,10 @@ import org.jsoup.nodes.Document
 class Title {
 
   /**
-   * @param document
-   * @return
+   * Extracts a title from the {@link Document} passed as parameter
+   *
+   * @param document the document we want the title from
+   * @return a string with the document's title
    * @since 0.1.0
    */
   static String extract(Document document) {
@@ -37,8 +39,10 @@ class Title {
   }
 
   /**
-   * @param document
-   * @return
+   * Extracts a title from the {@link Document} head -> title tag
+   *
+   * @param document the document we want the title from
+   * @return a string with the title found in the head section
    * @since 0.1.0
    */
   static String extractFromHead(Document document) {
@@ -48,8 +52,10 @@ class Title {
   }
 
   /**
-   * @param document
-   * @return
+   * Extracts a title from the {@link Document} H1 tag
+   *
+   * @param document the document we want the title from
+   * @return a string with the title found in the head section
    * @since 0.1.0
    */
   static String extractFromH1(Document document) {
@@ -61,8 +67,10 @@ class Title {
   }
 
   /**
-   * @param document
-   * @return
+   * Extracts a title from the {@link Document} meta tags
+   *
+   * @param document the document we want the title from
+   * @return a string with the title found in the head section
    * @since 0.1.0
    */
   static String extractFromMeta(Document document) {
