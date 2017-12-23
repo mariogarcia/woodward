@@ -51,6 +51,21 @@ An article pointer is just a pointer represented by
 get the full article you can use both the instance of
 `woodward.ArticlePointer` or the url alone.
 
+### How to get a specific Category
+
+If you're only interested in a specific category, you can pass the
+source url and the name of the category you're interested in.
+
+```groovy
+import woodward.W
+
+def category = W.loadCategory("http://www.cnn.com", "Sports")
+
+assert category.link
+assert category.name
+assert category.articles
+```
+
 ### How to get an article (plain string)
 
 ```groovy

@@ -64,4 +64,19 @@ class W {
       categories: Categories.extract(doc)
     )
   }
+
+  /**
+   * Loads only a specific category of a given source.
+   *
+   * @param url the url of the online newspaper
+   * @param name the name of the category we want
+   * @return an instance of {@link Category}
+   * @since 0.1.0
+   */
+  static Category loadCategory(String url, String name) {
+    Document doc = Network.getDocument(url)
+    Category category = Categories.extractCategory(doc, name)
+
+    return category
+  }
 }

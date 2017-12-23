@@ -36,6 +36,63 @@ class Categories {
   }
 
   /**
+   * Extracts a single category from the document passed as parameter
+   * with a specific name
+   *
+   * @param document the source document
+   * @param category the name of the category we are looking for
+   * @return an instance of type {@link Category}
+   * @since 0.1.0
+   */
+  static Category extractCategory(Document document, String category) {
+    URI uri = URI.create(document.location())
+    String host = uri.host - "www."
+    String selector = "a[href*=${host}]"
+
+    return document
+      .select(selector)
+      .find(Categories.isCategoryLinkAndHasName(category))
+      .collect(Categories.&extractCategoryFromLink)
+      .find()
+  }
+
+  /**
+   * Creates a predicate able to find those {@link Element} instances
+   * that represents a category link and containing the category name
+   * passed as parameter
+   *
+   * @param category the category name
+   * @return a predicate to find a specific set of links
+   * @since 0.1.0
+   */
+  static Closure<Boolean> isCategoryLinkAndHasName(String category) {
+    return Misc.and(Categories.&isCategoryLink, Categories.hasName(category))
+  }
+
+  /**
+   * Represents a predicate to find {@link Element} instances having in their
+   * text the category passed as parameter
+   *
+   * Both element text and category name are transformed to lowercase and then
+   * the function checks that the category passed as parameter is contained in the
+   * link text
+   *
+   * @param category the name of the category
+   * @return a predicate to check whether the category name is
+   * contained in the element's text
+   * @since 0.1.0
+   */
+  static Closure<Boolean> hasName(String category) {
+    return { Element item ->
+      return item
+        .text()
+        .toLowerCase()
+        .trim()
+        .contains(category.toLowerCase().trim())
+    }
+  }
+
+  /**
    * Whether the {@link Element} passed as parameter represents
    * a category link or not.
    *
