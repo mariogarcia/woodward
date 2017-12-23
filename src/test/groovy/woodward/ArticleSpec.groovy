@@ -1,9 +1,11 @@
 package woodward
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
-class LibraryTest extends Specification {
+class ArticleSpec extends Specification {
 
+  @Ignore
   def "someLibraryMethod returns true"() {
     when:
 //      Article article = W.readArticle("http://www.elmundo.es/cataluna/2017/12/19/5a3986a4268e3ed7478b45f5.html")
@@ -22,6 +24,7 @@ class LibraryTest extends Specification {
       article.authors
   }
 
+  @Ignore
   def "source"() {
     when:
       Source source = W.readSource("https://www.cnn.com")
