@@ -161,7 +161,38 @@ class Categories {
 
     return categoryHtml
       .select('a')
+      .findAll(Categories.belongToSameCategoryAs(link))
       .collect(Categories.&toArticleHolder)
+  }
+
+  /**
+   * This function returns a predicate that can be used to check
+   * whether a given {@link Element} representing a link, belongs to
+   * the same category as the one represented by the string uri passed
+   * as parameter
+   *
+   * @param categoryUri uri of the category
+   * @return a predicate to check whether the {@link Element} passed
+   * as parameter belongs to the same category by checking its URI
+   * root path
+   * @since 0.1.0
+   */
+  static Closure<Boolean> belongToSameCategoryAs(String categoryUri) {
+    Optional<String> optionalURI = Optional.ofNullable(categoryUri)
+
+    if (!optionalURI.isPresent()) {
+      //log.warn('category uri is not present, predicate {-> false } returned instead')
+
+      return { Element element ->
+        false
+      }
+    }
+
+    String categoryPath = URIs.getRootPathFrom(optionalURI)
+
+    return { Element element ->
+      return categoryPath == URIs.getRootPathFrom(Optional.ofNullable(element.attr('href')))
+    }
   }
 
   /**

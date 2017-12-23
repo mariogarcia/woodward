@@ -46,6 +46,27 @@ class URIs {
   }
 
   /**
+   * Returns the first fragment of the path of the uri passed
+   * as parameter <br/><br/>
+   *
+   * Given an uri: <br/><br/>
+   *
+   * <b>http://www.somedomain.com/sports/football/article_12312.html</b><br/><br/>
+   *
+   * The root path would be <b>sports</b>
+   *
+   * @param uri an {@link Optional} wrapping an {@link URI}
+   * @return a string with the root fragment of the uri's path
+   * @since 0.1.0
+   */
+  static String getRootPathFrom(Optional<URI> uri) {
+    return uri
+      .flatMap(URIs.&parseURI)
+      .map { it?.path?.split('/').findAll().find() }
+      .orElse("")
+  }
+
+  /**
    * Finds out if the uri passed as parameter has a query string or
    * not
    *
