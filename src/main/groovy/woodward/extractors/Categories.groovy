@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element
 import woodward.Source
 import woodward.Category
 import woodward.ArticleHolder
+import woodward.util.Log
 import woodward.util.URIs
 import woodward.util.Misc
 import woodward.util.Network
@@ -14,6 +15,7 @@ import woodward.util.Network
  *
  * @since 0.1.0
  */
+@Log
 class Categories {
 
   /**
@@ -181,7 +183,7 @@ class Categories {
     Optional<String> optionalURI = Optional.ofNullable(categoryUri)
 
     if (!optionalURI.isPresent()) {
-      //log.warn('category uri is not present, predicate {-> false } returned instead')
+      log.warn('category uri is not present, predicate {-> false } returned instead')
 
       return { Element element ->
         false
