@@ -37,7 +37,7 @@ class Misc {
    */
   static Closure<Boolean> and(Closure<Boolean> predLeft, Closure<Boolean> predRight) {
     return { item ->
-      return prefLeft(item) && predRight(item)
+      return predLeft(item) && predRight(item)
     }
   }
 }
