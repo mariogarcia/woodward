@@ -1,4 +1,7 @@
-apply plugin: 'groovy'
+plugins {
+  id 'groovy'
+	id 'net.carlosgsouza.console' version "1.0.1"
+}
 
 repositories {
     jcenter()
