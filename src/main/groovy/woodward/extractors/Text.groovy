@@ -70,9 +70,6 @@ class Text {
   static String byImportance(Document document) {
     return document
       .select("div p:gt(2)")
-      .find()
-      .parent()
-      .select("p")
-      .text()
+      .find()?.parent()?.select("p")?.text()
   }
 }

@@ -40,4 +40,8 @@ class Misc {
       return predLeft(item) && predRight(item)
     }
   }
+
+  static Closure executeClosure() {
+    return { Closure closure -> closure() }
+  }
 }
