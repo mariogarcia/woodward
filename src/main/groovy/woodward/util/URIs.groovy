@@ -129,4 +129,15 @@ class URIs {
   static Boolean hasNotScheme(URI uri) {
     return !hasScheme(uri)
   }
+
+  static Boolean haveSameDomain(String leftUri, String rightUri) {
+    Boolean sameDomain = URIs.parseURI(leftUri)
+      .map { left ->
+        URIs.parseURI(rightUri).map { right ->
+          right.authority == left.authority
+        }.orElse(false)
+      }.orElse(false)
+
+    return sameDomain
+  }
 }
