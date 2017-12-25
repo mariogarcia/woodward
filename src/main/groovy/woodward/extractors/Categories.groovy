@@ -27,14 +27,38 @@ class Categories {
    * @since 0.1.0
    */
   static List<Category> extract(Document document) {
-    URI uri = URI.create(document.location())
+    log.debug "extracting categories from document"
+
+    def paths = [{-> fromPathFragment(document)},
+                 {-> fromSubdomain(document)}]
+
+
+    return paths.findResult(Misc.&skipIfEmptyList)
+  }
+
+  /**
+   * First strategy to get all categories from a given
+   * online media. It looks for the links having the
+   * category name in the first path fragment. E.g. <br/><br/>
+   *
+   * http://www.somenewspaper.com/sports <br/><br/>
+   *
+   * @param doc the document to get the categories from
+   * @return a list of {@link Category} instances or empty list if
+   * none have been found
+   * @since 0.1.0
+   */
+  static List<Category> fromPathFragment(Document doc) {
+    log.debug "getting categories from uri path"
+
+    URI uri = URI.create(doc.location())
     String host = uri.host - "www."
     String selector = "a[href*=${host}]"
 
-    return document
+    return doc
       .select(selector)
-      .findAll(Categories.&isCategoryLink)
-      .collect(Categories.&extractCategoryFromLink)
+      .findAll(Categories.&isCategoryInPath)
+      .collect(Categories.&extractCategoryFromPath)
   }
 
   /**
@@ -49,12 +73,12 @@ class Categories {
   static Category extractCategory(Document document, String category) {
     URI uri = URI.create(document.location())
     String host = uri.host - "www."
-    String selector = "a[href*=${host}]"
+    String selector = "a"
 
     return document
       .select(selector)
-      .find(Categories.isCategoryLinkAndHasName(category))
-      .collect(Categories.&extractCategoryFromLink)
+      .find(Categories.isCategoryInPathAndHasName(category))
+      .collect(Categories.&extractCategoryFromPath)
       .find()
   }
 
@@ -67,8 +91,75 @@ class Categories {
    * @return a predicate to find a specific set of links
    * @since 0.1.0
    */
-  static Closure<Boolean> isCategoryLinkAndHasName(String category) {
-    return Misc.and(Categories.&isCategoryLink, Categories.hasName(category))
+  static Closure<Boolean> isCategoryInPathAndHasName(String category) {
+    return Misc.and(Categories.&isCategoryInPath, Categories.hasName(category))
+  }
+
+  /**
+   * Whether the {@link Element} passed as parameter represents
+   * a category link or not.
+   *
+   * A category link should follow certain rules:
+   *
+   * - The link name should have at most one word (Sports,
+   *   Technology, U.S. Politics...etc)
+   * - The uri should have at most two fragments in its path
+   * - Should not have a query part
+   *
+   * @param link an instance of {@link Element}
+   * @return whether the link is from a category or not
+   * @since 0.1.0
+   */
+  static Boolean isCategoryInPath(Element link) {
+    String repairedLink = URIs.repairLink(link.attr('href'), link)
+
+    Optional<URI> uri = URIs.parseURI(repairedLink)
+    Integer pathSize = URIs.getPathSize(uri)
+
+    Boolean twoFragments = pathSize == 2
+    Boolean oneFragment = pathSize == 1
+
+    Boolean hasQuery = URIs.hasQuery(uri)
+    Boolean hasNoun = hasCategoryNoun(link.text())
+
+    Boolean cond1 = twoFragments && !hasQuery && hasNoun
+    Boolean cond2 = oneFragment && hasNoun
+
+    return cond1 || cond2
+  }
+
+  /**
+   * Creates a {@link Category} instance from the {@link Element}
+   * passed as parameter
+   *
+   * @param link an element representing an html link
+   * @return an instance of type {@link Category}
+   * @since 0.1.0
+   */
+  static Category extractCategoryFromPath(Element link) {
+    def href = URIs.repairLink(link.attr('href'), link)
+    def name = link.text()
+    def articles = getArticlesFrom(href)
+
+    return new Category(name: name, link: href, articles: articles)
+  }
+
+  /**
+   * This stragegy tries to figure out the categories from
+   * the subdomain name. E.g: <br/><br/>
+   *
+   * http://sports.somenewspaper.com <br/><br/>
+   *
+   * Here the category has to be taken from
+   * **sports.somenewspaper.com**
+   *
+   * @param doc
+   * @return
+   * @since 0.1.0
+   */
+  static List<Category> fromSubdomain(Document doc) {
+    log.debug "getting categories from subdomain name"
+
   }
 
   /**
@@ -95,35 +186,11 @@ class Categories {
   }
 
   /**
-   * Whether the {@link Element} passed as parameter represents
-   * a category link or not.
-   *
-   * A category link should follow certain rules:
-   *
-   * - The link name should have only one word (Sports,
-   *   Technology...etc)
-   * - The uri should have only one fragment in its path
-   * - Should not have a query part
-   *
-   * @param link an instance of {@link Element}
-   * @return whether the link is from a category or not
-   * @since 0.1.0
-   */
-  static Boolean isCategoryLink(Element link) {
-    Optional<URI> uri = URIs.parseURI(link.attr('href'))
-    Integer pathSize = URIs.getPathSize(uri)
-    Boolean hasQuery = URIs.hasQuery(uri)
-    Boolean hasNoun = hasCategoryNoun(link.text())
-
-    return pathSize == 1 && !hasQuery && hasNoun
-  }
-
-  /**
-   * A category normally is named by just one word: Sports,
-   * International...
+   * A category normally is named by at most two words: Sports,
+   * International, U.S Politics...
    *
    * @param sentence sentence where the possible category name is
-   * @return whether there is just one word (true) or more (false) to
+   * @return whether there is at most two words (true) or more (false) to
    * name the category
    * @since 0.1.0
    */
@@ -131,23 +198,7 @@ class Categories {
     return sentence
       .split(" ")
       .findAll()
-      .size() == 1
-  }
-
-  /**
-   * Creates a {@link Category} instance from the {@link Element}
-   * passed as parameter
-   *
-   * @param link an element representing an html link
-   * @return an instance of type {@link Category}
-   * @since 0.1.0
-   */
-  static Category extractCategoryFromLink(Element link) {
-    def href = URIs.repairLink(link.attr('href'), link)
-    def name = link.text()
-    def articles = getArticlesFrom(href)
-
-    return new Category(name: name, link: href, articles: articles)
+      .size() <= 2
   }
 
   /**
@@ -165,6 +216,10 @@ class Categories {
       .select('a')
       .findAll(Categories.belongToSameCategoryAs(link))
       .collect(Categories.&toArticleHolder)
+      .sort { it.link.size() }
+      .unique { a, b ->
+        URI.create(a.link).path <=> URI.create(b.link).path
+      }
   }
 
   /**
@@ -193,7 +248,11 @@ class Categories {
     String categoryPath = URIs.getRootPathFrom(optionalURI)
 
     return { Element element ->
-      return categoryPath == URIs.getRootPathFrom(Optional.ofNullable(element.attr('href')))
+      def link = URIs.repairLink(element.attr('href'), element)
+      def sameDomain = URIs.haveSameDomain(categoryUri, link)
+      def categoryInLink = link ==~ ".*${categoryPath}.*"
+
+      return sameDomain && categoryInLink
     }
   }
 
@@ -206,6 +265,8 @@ class Categories {
    * @since 0.1.0
    */
   static ArticleHolder toArticleHolder(Element element) {
-    return new ArticleHolder(link: element.attr('href'))
+    String repairedLink = URIs.repairLink(element.attr('href'), element)
+
+    return new ArticleHolder(link: repairedLink)
   }
 }
