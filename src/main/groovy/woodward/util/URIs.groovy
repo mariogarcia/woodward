@@ -41,7 +41,7 @@ class URIs {
    */
   static Integer getPathSize(Optional<URI> uri) {
     return uri
-      .map { it.path.split('/').findAll().size() }
+      .map { it?.path?.split('/').findAll().size() }
       .orElse(0)
   }
 
@@ -55,11 +55,11 @@ class URIs {
    *
    * The root path would be <b>sports</b>
    *
-   * @param uri an {@link Optional} wrapping an {@link URI}
+   * @param uri an {@link Optional} wrapping an uri string
    * @return a string with the root fragment of the uri's path
    * @since 0.1.0
    */
-  static String getRootPathFrom(Optional<URI> uri) {
+  static String getRootPathFrom(Optional<String> uri) {
     return uri
       .flatMap(URIs.&parseURI)
       .map { it?.path?.split('/').findAll().find() }
@@ -98,7 +98,7 @@ class URIs {
       .flatMap { uri ->
          baseUri
           .filter(URIs.&hasScheme)
-          .map { "${it.scheme}:${uri}" }
+          .map { it.resolve(uri) }
       }
 
     return fixedUri.orElse(link)
