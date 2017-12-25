@@ -44,4 +44,8 @@ class Misc {
   static Closure executeClosure() {
     return { Closure closure -> closure() }
   }
+
+  static <T> Closure<T> identity() {
+    return { T item -> item }
+  }
 }

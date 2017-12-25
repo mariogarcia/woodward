@@ -29,9 +29,23 @@ class Categories {
   static List<Category> extract(Document document) {
     log.debug "extracting categories from document"
 
+    return extractNames(document)
+      .collect(Categories.&loadCategoryArticles)
+  }
+
+  /**
+   * Extracts a list of {@link Category} names from the {@link
+   * Document} passed as parameter
+   *
+   * @param document document we want the categories from
+   * @return a list of category names
+   * @since 0.1.0
+   */
+  static List<String> extractNames(Document document) {
+    log.debug "extracting category names from document"
+
     def paths = [{-> fromPathFragment(document)},
                  {-> fromSubdomain(document)}]
-
 
     return paths.findResult(Misc.&skipIfEmptyList)
   }
@@ -59,40 +73,6 @@ class Categories {
       .select(selector)
       .findAll(Categories.&isCategoryInPath)
       .collect(Categories.&extractCategoryFromPath)
-  }
-
-  /**
-   * Extracts a single category from the document passed as parameter
-   * with a specific name
-   *
-   * @param document the source document
-   * @param category the name of the category we are looking for
-   * @return an instance of type {@link Category}
-   * @since 0.1.0
-   */
-  static Category extractCategory(Document document, String category) {
-    URI uri = URI.create(document.location())
-    String host = uri.host - "www."
-    String selector = "a"
-
-    return document
-      .select(selector)
-      .find(Categories.isCategoryInPathAndHasName(category))
-      .collect(Categories.&extractCategoryFromPath)
-      .find()
-  }
-
-  /**
-   * Creates a predicate able to find those {@link Element} instances
-   * that represents a category link and containing the category name
-   * passed as parameter
-   *
-   * @param category the category name
-   * @return a predicate to find a specific set of links
-   * @since 0.1.0
-   */
-  static Closure<Boolean> isCategoryInPathAndHasName(String category) {
-    return Misc.and(Categories.&isCategoryInPath, Categories.hasName(category))
   }
 
   /**
@@ -139,9 +119,21 @@ class Categories {
   static Category extractCategoryFromPath(Element link) {
     def href = URIs.repairLink(link.attr('href'), link)
     def name = link.text()
-    def articles = getArticlesFrom(href)
 
-    return new Category(name: name, link: href, articles: articles)
+    return new Category(name: name, link: href)
+  }
+
+  /**
+   * Loads the articles of the {@link Category} passed as parameter
+   * and returns a new {@link Category} instance with its articles
+   * loaded
+   *
+   * @param category without the articles loaded
+   * @return a new instance with the category articles loaded
+   * @since 0.1.0
+   */
+  static Category loadCategoryArticles(Category category) {
+    return category.copyWith(articles: getArticlesFrom(category.link))
   }
 
   /**
@@ -160,29 +152,6 @@ class Categories {
   static List<Category> fromSubdomain(Document doc) {
     log.debug "getting categories from subdomain name"
 
-  }
-
-  /**
-   * Represents a predicate to find {@link Element} instances having in their
-   * text the category passed as parameter
-   *
-   * Both element text and category name are transformed to lowercase and then
-   * the function checks that the category passed as parameter is contained in the
-   * link text
-   *
-   * @param category the name of the category
-   * @return a predicate to check whether the category name is
-   * contained in the element's text
-   * @since 0.1.0
-   */
-  static Closure<Boolean> hasName(String category) {
-    return { Element item ->
-      return item
-        .text()
-        .toLowerCase()
-        .trim()
-        .contains(category.toLowerCase().trim())
-    }
   }
 
   /**
@@ -254,6 +223,36 @@ class Categories {
 
       return sameDomain && categoryInLink
     }
+  }
+
+  /**
+   * Returns a function to filter categories by the
+   * regex passed as parameter
+   *
+   * @param name name to filter categories by
+   * @return a function to filter categories by name
+   * @since 0.1.0
+   */
+  static Closure<Boolean> byNameIfPresent(String name) {
+    Optional<String> categoryName = Optional.ofNullable(name)
+
+    return !categoryName.isPresent() ?
+      { Category category -> false } :
+      { Category category -> category.name ==~ name }
+  }
+
+  /**
+   * Depending on the parameter passed it will return a function that
+   * loads a category articles or the identity function
+   *
+   * @param load whether to load or not category's articles
+   * @return a function conditionally loading category's articles
+   * @since 0.1.0
+   */
+  static Closure<Category> loadArticlesIf(Boolean load) {
+    return load ?
+      Categories.&loadCategoryArticles :
+      Misc.identity()
   }
 
   /**

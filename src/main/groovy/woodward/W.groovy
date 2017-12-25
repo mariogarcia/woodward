@@ -1,17 +1,10 @@
 package woodward
 
-import org.jsoup.nodes.Document
-
-import woodward.extractors.Text
-import woodward.extractors.Title
-import woodward.extractors.Dates
-import woodward.extractors.Authors
-import woodward.extractors.Categories
-import woodward.util.Network
 import woodward.plan.SourcePlan
 import woodward.plan.ArticlePlan
 import woodward.plan.ArticlesPlan
 import woodward.plan.ArticlesInPlan
+import woodward.plan.CategoryPlan
 
 /**
  * Set of functions to retrieve front pages ({@link Source}) or
@@ -82,17 +75,18 @@ class W {
   }
 
   /**
-   * Loads only a specific category of a given source.
+   * Builds a {@link CategoryPlan} to get instances of type
+   * {@link Category}.
    *
-   * @param url the url of the online newspaper
-   * @param name the name of the category we want
-   * @return an instance of {@link Category}
+   * A {@link CategoryPlan} can retrieve all categories or those
+   * filtered by a name pattern
+   *
+   * @param uri uri to get categories from
+   * @return an instance of type {@link CategoryPlan}
    * @since 0.1.0
+   * @see CategoryPlan
    */
-  static Category loadCategory(String url, String name) {
-    Document doc = Network.getDocument(url)
-    Category category = Categories.extractCategory(doc, name)
-
-    return category
+  static CategoryPlan category(String uri) {
+    return new CategoryPlan(uri: uri)
   }
 }

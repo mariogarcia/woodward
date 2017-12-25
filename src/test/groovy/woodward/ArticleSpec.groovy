@@ -23,6 +23,7 @@ class ArticleSpec extends Specification {
       .byTitle(".*Apple.*")
       .byCategory("tech")
       .all()
+
 //
 //    Category cnnSports = W
 //      .categoriesIn("http://www.cnn.com")

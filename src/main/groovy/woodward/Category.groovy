@@ -8,7 +8,7 @@ import woodward.util.Domain
  *
  * @since 0.1.0
  */
-@Domain(includeNames = true)
+@Domain(includeNames = true, copyWith = true)
 class Category {
 
   /**
