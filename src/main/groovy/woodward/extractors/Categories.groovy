@@ -242,6 +242,22 @@ class Categories {
   }
 
   /**
+   * Returns a function to filter categories by the
+   * regex passed as parameter
+   *
+   * @param linkRegex link regex to filter categories by
+   * @return a function to filter categories by name
+   * @since 0.1.0
+   */
+  static Closure<Boolean> byLinkIfPresent(String linkRegex) {
+    Optional<String> categoryLink = Optional.ofNullable(linkRegex)
+
+    return !categoryLink.isPresent() ?
+      { Category category -> true } :
+      { Category category -> category.link ==~ linkRegex }
+  }
+
+  /**
    * Depending on the parameter passed it will return a function that
    * loads a category articles or the identity function
    *

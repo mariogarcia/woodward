@@ -29,6 +29,13 @@ class CategoryPlan implements FilteredPlan<Category> {
   String nameRegex
 
   /**
+   * Regex used to filter out the categories by link
+   *
+   * @since 0.1.0
+   */
+  String linkRegex
+
+  /**
    * If true the plan won't load categories related articles
    *
    * @since 0.1.0
@@ -45,6 +52,18 @@ class CategoryPlan implements FilteredPlan<Category> {
    */
   CategoryPlan byName(String regex) {
     return this.copyWith(nameRegex: regex)
+  }
+
+  /**
+   * Instructs the plan to filter categories by the regex passed as
+   * parameter. It will be evaluated against the categories links
+   *
+   * @param regex regular expression to filter categories by link
+   * @return a new {@link CategoryPlan} plan filtered by regex
+   * @since 0.1.0
+   */
+  CategoryPlan byLink(String regex) {
+    return this.copyWith(linkRegex: regex)
   }
 
   /**
@@ -70,7 +89,9 @@ class CategoryPlan implements FilteredPlan<Category> {
 
     return categories
       .findAll(Categories.byNameIfPresent(nameRegex))
+      .findAll(Categories.byLinkIfPresent(linkRegex))
       .collect(Categories.loadArticlesIf(!justNames))
+      .unique { a, b -> a.link <=> b.link }
   }
 
   /**
