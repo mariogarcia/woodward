@@ -237,7 +237,7 @@ class Categories {
     Optional<String> categoryName = Optional.ofNullable(name)
 
     return !categoryName.isPresent() ?
-      { Category category -> false } :
+      { Category category -> true } :
       { Category category -> category.name ==~ name }
   }
 
