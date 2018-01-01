@@ -1,14 +1,13 @@
 package woodward
 
-import woodward.plan.SourcePlan
 import woodward.plan.ArticlePlan
 import woodward.plan.ArticlesPlan
 import woodward.plan.ArticlesInPlan
 import woodward.plan.CategoryPlan
 
 /**
- * Set of functions to retrieve front pages ({@link Source}) or
- * articles {@link Article} from an online newspaper
+ * Set of functions to retrieve categories or articles {@link Article}
+ * from an online newspaper
  *
  * @since 0.1.0
  */
@@ -60,18 +59,6 @@ class W {
    */
   static ArticlesInPlan articlesIn(String uri) {
     return new ArticlesInPlan(uri: uri)
-  }
-
-  /**
-   * Retrieves the content of a given source. A {@link Source} is like
-   * the root site of an online newspaper, the frontpage so to speak.
-   *
-   * @param url the location of the source
-   * @return an instance of {@link Source}
-   * @since 0.1.0
-   */
-  static Source source(String uri) {
-    return new SourcePlan(uri: uri).get()
   }
 
   /**

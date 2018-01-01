@@ -35,12 +35,4 @@ class ArticleSpec extends Specification {
     then:
       filtered.size() > 0
   }
-
-  def "source"() {
-    when:
-      Source source = W.source("https://www.cnn.com")
-
-    then:
-      source.categories
-  }
 }

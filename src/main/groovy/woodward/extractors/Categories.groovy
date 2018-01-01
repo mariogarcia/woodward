@@ -2,7 +2,6 @@ package woodward.extractors
 
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
-import woodward.Source
 import woodward.Category
 import woodward.ArticleHolder
 import woodward.util.Log
