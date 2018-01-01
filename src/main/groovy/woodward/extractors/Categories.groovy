@@ -97,6 +97,7 @@ class Categories {
       .select(selector)
       .findAll(Categories.&isCategoryInPath)
       .collect(Categories.&extractCategoryFromPath)
+      .findAll { it.name }
   }
 
   /**
