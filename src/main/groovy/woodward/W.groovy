@@ -86,7 +86,7 @@ class W {
    * @since 0.1.0
    * @see CategoryPlan
    */
-  static CategoryPlan category(String uri) {
+  static CategoryPlan categoriesIn(String uri) {
     return new CategoryPlan(uri: uri)
   }
 }
