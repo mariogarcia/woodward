@@ -31,6 +31,7 @@ class ArticlePlan implements Plan<Article> {
       .collect()
 
     return new Article(text: text,
+                       link: uri,
                        title: title,
                        authors: authors,
                        publishDate: publishDate)

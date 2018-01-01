@@ -18,6 +18,13 @@ class Article {
   String text
 
   /**
+   * Direct link to article
+   *
+   * @since 0.1.0
+   */
+  String link
+
+  /**
    * The title of the article
    *
    * @since 0.1.0
