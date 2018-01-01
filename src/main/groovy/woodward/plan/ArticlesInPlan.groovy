@@ -97,10 +97,6 @@ class ArticlesInPlan implements FilteredPlan<Article> {
    * @since 0.1.0
    */
   Article single() {
-    return uris
-      .parallelStream()
-      .map { new ArticlePlan(uri: it).get() }
-      .collect()
-
+    return all().find()
   }
 }
