@@ -34,6 +34,29 @@ class Categories {
   }
 
   /**
+   * All category names should be trimmed and converted to lowercase
+   *
+   * @param rawCategory A category with a non treated name
+   * @return a category with its name normalized
+   * @since 0.1.0
+   */
+  static Category normalizeCategoryName(Category rawCategory) {
+    return rawCategory.copyWith(name: normalizeName(rawCategory?.name))
+  }
+
+  /**
+   * Normalizes a given name by trimming and converting it to
+   * lowercase
+   *
+   * @param name to be converted
+   * @return the normalized name
+   * @since 0.1.0
+   */
+  static String normalizeName(String name) {
+    return name?.trim()?.toLowerCase()
+  }
+
+  /**
    * Extracts a list of {@link Category} names from the {@link
    * Document} passed as parameter
    *
@@ -41,13 +64,15 @@ class Categories {
    * @return a list of category names
    * @since 0.1.0
    */
-  static List<String> extractNames(Document document) {
+  static List<Category> extractNames(Document document) {
     log.debug "extracting category names from document"
 
     def paths = [{-> fromPathFragment(document)},
                  {-> fromSubdomain(document)}]
 
-    return paths.findResult(Misc.&skipIfEmptyList)
+    return paths
+      .findResult(Misc.&skipIfEmptyList)
+      .collect(Categories.&normalizeCategoryName)
   }
 
   /**

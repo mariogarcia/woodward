@@ -44,8 +44,8 @@ source url and the name of the category you're interested in.
 import woodward.*
 
 Category cnnSports = W
-  .categoriesIn("http://www.cnn.com")
-  .byName("Sports")
+  .categoriesIn("http://www.usatoday.com")
+  .byName("sports")
   .single()
 ```
 
