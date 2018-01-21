@@ -1,0 +1,18 @@
+
+language: java
+jdk:
+- oraclejdk8
+before_cache:
+- rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+cache:
+  directories:
+  - "$HOME/.gradle/caches/"
+  - "$HOME/.gradle/wrapper/"
+env:
+  global:
+install: "./gradlew assemble -PbintrayUser=${bintrayUser} -PbintrayKey=${bintrayKey}"
+script: "./gradlew clean build bintrayUpload -PbintrayUser=${bintrayUser}
+  -PbintrayKey=${bintrayKey}"
+branches:
+  only:
+  - master
