@@ -61,7 +61,7 @@ class Authors {
    * @return a list of authors
    * @since 0.1.0
    */
-  static List<String> byAttrName(Document document) {
+  static Collection<String> byAttrName(Document document) {
     def attrs = ['name', 'rel', 'itemprop', 'class', 'id']
     def values = ['author', 'byline', 'dc.creator']
 
@@ -105,7 +105,7 @@ class Authors {
    * @return a list of authors
    * @since 0.1.0
    */
-  static List<String> byElementClass(Document document){
+  static Collection<String> byElementClass(Document document){
     def classNames = ['author-name', 'article-author-link']
     def authors = classNames.findResult { name ->
       document.select(".$name").text() ?: null
@@ -127,7 +127,7 @@ class Authors {
    * @return a list of authors
    * @since 0.1.0
    */
-  static List<String> byAttributeAndContent(Document document) {
+  static Collection<String> byAttributeAndContent(Document document) {
     String authors = document
       .select("[class*=author]:contains(By)")
       .collect { it.text().trim() }
@@ -160,7 +160,7 @@ class Authors {
    * @return a list of authors
    * @since 0.1.0
    */
-  static List<String> splitAuthors(String authors) {
+  static Collection<String> splitAuthors(String authors) {
     if (!authors) return []
 
     return removePrefixes(authors)

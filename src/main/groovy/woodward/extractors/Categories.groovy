@@ -1,5 +1,7 @@
 package woodward.extractors
 
+import groovy.transform.CompileDynamic
+
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import woodward.Category
@@ -15,6 +17,7 @@ import woodward.util.Network
  * @since 0.1.0
  */
 @Log
+@CompileDynamic
 class Categories {
 
   /**

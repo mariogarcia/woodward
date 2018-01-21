@@ -50,14 +50,14 @@ class ArticlesInPlan implements FilteredPlan<Article> {
    * @return
    * @since 0.1.0
    */
-  List<Article> all() {
+  Collection<Article> all() {
     return new CategoryPlan(uri: uri)
       .byName(category)
       .all()
       .parallelStream()
       .flatMap(ArticlesInPlan.extractArticles())
       .map(ArticlesInPlan.rehydrateArticle())
-      .filter(ArticlesInPlan.articleTitleContains(title))
+      .filter(ArticlesInPlan.articleTitleContains(title) as java.util.function.Predicate)
       .collect()
   }
 

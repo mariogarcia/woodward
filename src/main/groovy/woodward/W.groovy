@@ -46,7 +46,7 @@ class W {
    * @return an list of {@link Article} instances
    * @since 0.1.0
    */
-  static List<Article> articles(String... uris) {
+  static Collection<Article> articles(String... uris) {
     return new ArticlesPlan(uris: uris as List).get()
   }
 

@@ -1,5 +1,6 @@
 package woodward.extractors
 
+import groovy.transform.CompileDynamic
 import org.jsoup.nodes.Document
 
 /**
@@ -81,6 +82,7 @@ class Dates {
      * @return a string representing the extracted date
      * @since 0.1.0
      */
+    @CompileDynamic
     static String fromUrl(Document document) {
       def url = document.location()
       def matcher = url =~ DATE_REGEX

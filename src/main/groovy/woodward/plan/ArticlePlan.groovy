@@ -1,5 +1,7 @@
 package woodward.plan
 
+import groovy.transform.CompileDynamic
+
 import woodward.Article
 import woodward.util.Misc
 import woodward.util.Network
@@ -8,6 +10,7 @@ import woodward.extractors.Title
 import woodward.extractors.Dates
 import woodward.extractors.Authors
 
+@CompileDynamic
 class ArticlePlan implements Plan<Article> {
 
   String uri

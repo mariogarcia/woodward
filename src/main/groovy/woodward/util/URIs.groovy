@@ -1,5 +1,6 @@
 package woodward.util
 
+import groovy.transform.CompileDynamic
 import org.jsoup.nodes.Element
 
 /**
@@ -7,6 +8,7 @@ import org.jsoup.nodes.Element
  *
  * @since 0.1.0
  */
+@CompileDynamic
 class URIs {
 
   /**
